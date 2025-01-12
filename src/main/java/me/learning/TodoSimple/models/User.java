@@ -46,6 +46,7 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "user")
+    @Getter(onMethod_ = @__( @JsonProperty ))
     private List<Task> tasks = new ArrayList<Task>();
 
 
