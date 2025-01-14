@@ -1,5 +1,7 @@
 package me.learning.TodoSimple.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -46,9 +48,8 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "user")
-    @Getter(onMethod_ = @__( @JsonProperty ))
+    @Getter(onMethod_ = @__( @JsonIgnore ))
     private List<Task> tasks = new ArrayList<Task>();
-
 
     @Override
     public boolean equals(Object o) {

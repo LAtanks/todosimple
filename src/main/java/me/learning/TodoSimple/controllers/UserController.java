@@ -23,7 +23,7 @@ public class UserController {
     public ResponseEntity<User> findById(@PathVariable Long id){
         User obj = this.userService.findById(id);
 
-        return ResponseEntity.ok().body(obj);
+        return ResponseEntity.ok(obj);
     }
 
     @PostMapping
