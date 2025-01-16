@@ -36,6 +36,8 @@ dependencies {
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+	implementation("org.apache.commons:commons-lang3")
 }
 
 tasks.withType<Test> {
