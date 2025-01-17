@@ -20,8 +20,8 @@ import java.util.stream.Stream;
 @Service
 public class UserService {
 
-    //@Autowired
-    //private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     private IUserRepository userRepository;
@@ -34,7 +34,7 @@ public class UserService {
     @Transactional
     public User create(User obj){
         obj.setId(null);
-        obj.setPassword(this.passwordEncoder().encode(obj.getPassword()));
+        obj.setPassword(this.bCryptPasswordEncoder.encode(obj.getPassword()));
         obj.setProfiles(Stream.of(ProfileEnum.USER.getCode()).collect(Collectors.toSet()));
         obj = this.userRepository.save(obj);
         return obj;
@@ -44,7 +44,7 @@ public class UserService {
     public User update(User obj){
         User newObj = this.findById(obj.getId());
         newObj.setPassword(obj.getPassword());
-        newObj.setPassword((this.passwordEncoder().encode(obj.getPassword())));
+        newObj.setPassword((this.bCryptPasswordEncoder.encode(obj.getPassword())));
         return this.userRepository.save(newObj);
     }
 
@@ -55,11 +55,5 @@ public class UserService {
         } catch (Exception e) {
             throw new DataBindingViolationException("It is not possible to delete, because there are related entities.");
         }
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder()
-    {
-        return new BCryptPasswordEncoder();
     }
 }
