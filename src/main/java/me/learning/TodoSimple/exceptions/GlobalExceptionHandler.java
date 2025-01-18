@@ -79,6 +79,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.CONFLICT,
                 webRequest
         );
+
+
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
