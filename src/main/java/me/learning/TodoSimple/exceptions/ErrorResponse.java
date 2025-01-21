@@ -18,6 +18,7 @@ public class ErrorResponse {
     private String stackTrace;
     private List<ValidationError> errors;
 
+
     @RequiredArgsConstructor
     private static class ValidationError{
         private final String field;
@@ -30,4 +31,10 @@ public class ErrorResponse {
         }
         this.errors.add(new ValidationError(field, message));
     }
+
+    public String toJson() {
+        return "{\"status\": " + getStatus() + ", " +
+                "\"message\": \"" + getMessage() + "\"}";
+    }
+
 }

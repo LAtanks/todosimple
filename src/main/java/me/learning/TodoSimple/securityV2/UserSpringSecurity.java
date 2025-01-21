@@ -1,5 +1,8 @@
-package me.learning.TodoSimple.security;
+package me.learning.TodoSimple.securityV2;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.learning.TodoSimple.models.enums.ProfileEnum;
@@ -25,7 +28,8 @@ public class UserSpringSecurity implements UserDetails {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.authorities = profileEnums.stream().map(x -> new SimpleGrantedAuthority(x.getDescription())).collect(Collectors.toSet());
+        this.authorities = profileEnums.stream().map(x -> new SimpleGrantedAuthority(x.getDescription()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -48,7 +52,8 @@ public class UserSpringSecurity implements UserDetails {
         return true;
     }
 
-    public boolean hasRole(ProfileEnum profileEnum){
-        return this.getAuthorities().contains(new SimpleGrantedAuthority(profileEnum.getDescription()));
+    public boolean hasRole(ProfileEnum profileEnum) {
+        return getAuthorities().contains(new SimpleGrantedAuthority(profileEnum.getDescription()));
     }
+
 }

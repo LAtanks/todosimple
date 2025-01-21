@@ -1,6 +1,9 @@
 package me.learning.TodoSimple.exceptions;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import me.learning.TodoSimple.services.exceptions.DataBindingViolationException;
@@ -12,6 +15,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,12 +25,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 
 @Slf4j(topic = "GLOBAL_EXCEPTION_HANDLER")
 @RestControllerAdvice
-//@JsonInclude(JsonInclude.Include.NON_NULL) not working because: I dont know
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler implements AuthenticationFailureHandler {
 
     @Value("${server.error.include-exception}")
     private boolean printStackTrace;
@@ -117,7 +122,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.CONFLICT,
                 request);
     }
-/*
+
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<Object> handleAuthenticationException(
@@ -129,7 +134,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.UNAUTHORIZED,
                 request);
     }
-*/
+
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ResponseEntity<Object> handleAccessDeniedException(
@@ -174,5 +179,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         }
 
         return ResponseEntity.status(httpStatus).body(errorResponse);
+    }
+
+    @Override
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception)
+            throws IOException, ServletException {
+        int status = HttpStatus.OK.value();
+
+        response.setStatus(status);
+        response.setContentType("application/json");
+        ErrorResponse errorResponse = new ErrorResponse(status, "Invalid E-mail or password");
+        response.getWriter().append(errorResponse.toJson());
     }
 }
