@@ -1,0 +1,81 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+main{
+    height: 100vh;
+    width: 100vw;
+    background-color: aliceblue;
+    text-align: center;
+}
+
+span#error-message{
+    color: red;
+    font-size: 20pt;
+
+    margin: auto;
+    position: relative;
+    top: 20vh;
+
+    display: none;
+}
+
+div#loginPage{
+    width: 250px;
+    height: 250px;
+    background-color: azure;
+
+    margin: auto;
+    padding: 20px;
+    position: relative;
+    top: 25vh;
+
+    border-style: solid;
+    border-radius: 10px;
+
+    text-align: center;
+    align-items: center;
+    align-self: center;
+    align-content: center;
+}
+
+div#loginPage span{
+    font-size: 25pt;
+    font-weight: bold;   
+}
+div#loginPage input{
+    margin: 10px;
+    border-radius: 25px;
+    border-style: solid;
+    border-color: gainsboro;
+    padding: 5px;
+    transition: .2s;
+}
+div#loginPage input::placeholder{
+    opacity: 0.5;
+}
+
+div#loginPage input:focus{
+    outline: none !important;
+    border:3px solid rgb(83, 83, 83);
+}
+
+div#loginPage input#submit{
+    margin-top: 15px;
+    width: 120px;
+    padding: 2px;
+    background-color: orange;
+    color: white;
+    font-size: 14pt;
+
+    border-radius: 15px;
+    border-style: solid;
+    border-color: gainsboro;
+}
+div#loginPage input#submit:hover{
+    border-radius: 15px;
+    border-style: solid;
+    border-color: rgb(83, 83, 83);
+}

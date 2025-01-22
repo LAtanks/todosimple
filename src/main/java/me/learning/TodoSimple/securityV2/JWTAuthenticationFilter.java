@@ -9,6 +9,7 @@ import me.learning.TodoSimple.exceptions.GlobalExceptionHandler;
 import me.learning.TodoSimple.models.User;
 import me.learning.TodoSimple.repositories.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import javax.naming.AuthenticationException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -33,6 +36,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse response) {
+
         try {
             User userCredentials = new ObjectMapper().readValue(request.getInputStream(), User.class);
 
@@ -40,10 +44,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     userCredentials.getUsername(), userCredentials.getPassword(), new ArrayList<>());
 
             Authentication authentication = this.authenticationManager.authenticate(authToken);
+
             return authentication;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+
     }
 
     @Override
@@ -52,10 +59,22 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             throws IOException, ServletException {
         UserSpringSecurity userSpringSecurity = (UserSpringSecurity) authentication.getPrincipal();
         String username = userSpringSecurity.getUsername();
-
         String token = this.jwtUtil.generateToken(username);
+        response.setContentType("application/json");
         response.addHeader("Authorization", "Bearer " + token);
         response.addHeader("access-control-expose-headers", "Authorization");
     }
 
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, org.springframework.security.core.AuthenticationException failed) throws IOException, ServletException {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", "Falha na autenticação");
+        errorResponse.put("message", failed.getMessage());
+
+        final ObjectMapper objectMapper = new ObjectMapper();
+
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType("application/json");
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+    }
 }

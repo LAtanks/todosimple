@@ -1,7 +1,14 @@
 const url = "http://localhost:8080/task/user/1";
 
+document.getElementById("submit").addEventListener("onclick", getAPI(url))
+
 function hideLoader(){
-    document.getElementById("loading").style.display = "none";
+  //  document.getElementById("loading").style.display = "none";
+}
+
+function showErrorMsg(msg){
+    document.getElementById("error-message").style.display = "block"
+    document.getElementById("error-message").innerHTML = msg
 }
 
 function show(tasks){
@@ -24,19 +31,27 @@ function show(tasks){
         `;
     }
     
-    document.getElementById("tasks").innerHTML = tab;
+    //document.getElementById("tasks").innerHTML = tab;
 }
 
 async function getAPI(url){
-    const response = await fetch(url, { method: "GET"});
+    const response = undefined;// = await fetch(url, { method: "GET"});
 
-    var data = await response.json();
+    try {
+        response = await fetch(url, { method: "GET"});
+        var data = await response.json();
     console.log(data);
     if(response){
         hideLoader();
     }
+    } catch (error) {
+        hideLoader()
+        showErrorMsg(error)
+    }
 
-    show(data);
+    
+
+    //show(data);
 }
 
 getAPI(url);
