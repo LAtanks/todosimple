@@ -1,17 +1,14 @@
-package me.learning.TodoSimple.securityV2;
+package me.learning.TodoSimple.security;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.learning.TodoSimple.models.User;
 import me.learning.TodoSimple.models.enums.ProfileEnum;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,17 +16,23 @@ import java.util.stream.Collectors;
 @Getter
 public class UserSpringSecurity implements UserDetails {
 
-    private Long id;
-    private String username;
-    private String password;
+    private User user;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserSpringSecurity(Long id, String username, String password, Set<ProfileEnum> profileEnums) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
+    public UserSpringSecurity(User user, Set<ProfileEnum> profileEnums) {
+        this.user = user;
         this.authorities = profileEnums.stream().map(x -> new SimpleGrantedAuthority(x.getDescription()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getPassword() {
+        return user.getPassword();
+    }
+
+    @Override
+    public String getUsername() {
+        return user.getUsername();
     }
 
     @Override

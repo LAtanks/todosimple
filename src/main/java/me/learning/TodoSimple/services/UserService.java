@@ -2,14 +2,11 @@ package me.learning.TodoSimple.services;
 
 import me.learning.TodoSimple.models.User;
 import me.learning.TodoSimple.models.enums.ProfileEnum;
-import me.learning.TodoSimple.repositories.ITaskRepository;
 import me.learning.TodoSimple.repositories.IUserRepository;
 import me.learning.TodoSimple.services.exceptions.DataBindingViolationException;
 import me.learning.TodoSimple.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,10 +16,8 @@ import java.util.stream.Stream;
 
 @Service
 public class UserService {
-
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
-
     @Autowired
     private IUserRepository userRepository;
 
@@ -56,6 +51,4 @@ public class UserService {
             throw new DataBindingViolationException("It is not possible to delete, because there are related entities.");
         }
     }
-
-
 }
