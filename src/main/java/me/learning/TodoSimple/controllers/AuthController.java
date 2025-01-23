@@ -1,5 +1,6 @@
 package me.learning.TodoSimple.controllers;
 
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import me.learning.TodoSimple.models.User;
 import me.learning.TodoSimple.security.JWTUtil;
@@ -31,14 +32,7 @@ public class AuthController {
     private JWTUtil jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid User data) throws BadCredentialsException {
-       UserSpringSecurity user = (UserSpringSecurity) this.userDetailsService.loadUserByUsername(data.getUsername());
-/*
-        var userCredetials = new UsernamePasswordAuthenticationToken( user.getUsername(), user.getPassword(), user.getAuthorities()) ;
-        var auth = this.authenticationManager.authenticate(userCredetials);
-
-        var token = jwtUtil.generateToken((User) auth.getPrincipal());
-*/
+    public ResponseEntity login(@RequestBody @Valid User data) throws ConstraintViolationException {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -49,8 +43,8 @@ public class AuthController {
 
             String token = jwtUtil.generateToken(data.getUsername());
 
-            return ResponseEntity.ok().body(Map.of("token", token));
-        }catch (BadCredentialsException e){
+            return ResponseEntity.ok().body(Map.of("token", "Bearer "+token));
+        }catch (ConstraintViolationException e){
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid Credencials"));
         }

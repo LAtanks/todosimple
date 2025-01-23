@@ -3,13 +3,17 @@ package me.learning.TodoSimple.services;
 import me.learning.TodoSimple.models.User;
 import me.learning.TodoSimple.models.enums.ProfileEnum;
 import me.learning.TodoSimple.repositories.IUserRepository;
+import me.learning.TodoSimple.security.UserSpringSecurity;
+import me.learning.TodoSimple.services.exceptions.AuthorizationException;
 import me.learning.TodoSimple.services.exceptions.DataBindingViolationException;
 import me.learning.TodoSimple.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,6 +26,12 @@ public class UserService {
     private IUserRepository userRepository;
 
     public User findById(Long id){
+        UserSpringSecurity userSpringSecurity = authenticated();
+        if (!Objects.nonNull(userSpringSecurity)
+                || !userSpringSecurity.hasRole(ProfileEnum.ADMIN) && !id.equals(userSpringSecurity.getUser().getId())) {
+            throw new AuthorizationException("Acesso negado!");
+        }
+
         Optional<User> user = this.userRepository.findById(id);
         return user.orElseThrow(() -> new ObjectNotFoundException("User id: " + id +" don't exists"));
     }
@@ -49,6 +59,14 @@ public class UserService {
             this.userRepository.deleteById(id);
         } catch (Exception e) {
             throw new DataBindingViolationException("It is not possible to delete, because there are related entities.");
+        }
+    }
+
+    public static UserSpringSecurity authenticated(){
+        try {
+            return (UserSpringSecurity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } catch (Exception e) {
+            return null;
         }
     }
 }

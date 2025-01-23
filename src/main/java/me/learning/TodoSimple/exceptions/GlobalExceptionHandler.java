@@ -1,11 +1,14 @@
 package me.learning.TodoSimple.exceptions;
 
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import me.learning.TodoSimple.services.exceptions.AuthorizationException;
 import me.learning.TodoSimple.services.exceptions.DataBindingViolationException;
 import me.learning.TodoSimple.services.exceptions.ObjectNotFoundException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -146,7 +149,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                 HttpStatus.FORBIDDEN,
                 request);
     }
-/*
+
     @ExceptionHandler(AuthorizationException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ResponseEntity<Object> handleAuthorizationException(
@@ -157,7 +160,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                 authorizationException,
                 HttpStatus.FORBIDDEN,
                 request);
-    }*/
+    }
+
+    @ExceptionHandler(JWTDecodeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handleJWTDecodeException(JWTDecodeException ex, WebRequest webRequest) {
+
+
+        return buildErrorMessage(ex, ex.getMessage(), HttpStatus.BAD_REQUEST, webRequest);
+    }
 
     private ResponseEntity<Object> buildErrorResponse(
             Exception exception,
