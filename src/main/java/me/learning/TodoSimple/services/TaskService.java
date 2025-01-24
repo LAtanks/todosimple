@@ -3,6 +3,7 @@ package me.learning.TodoSimple.services;
 import me.learning.TodoSimple.models.Task;
 import me.learning.TodoSimple.models.User;
 import me.learning.TodoSimple.models.enums.ProfileEnum;
+import me.learning.TodoSimple.models.projection.TaskProjection;
 import me.learning.TodoSimple.repositories.ITaskRepository;
 import me.learning.TodoSimple.security.UserSpringSecurity;
 import me.learning.TodoSimple.services.exceptions.AuthorizationException;
@@ -24,14 +25,14 @@ public class TaskService {
     private ITaskRepository taskRepository;
     @Autowired
     private UserService userService;
-    public List<Task> findAllByUserId(Long userId) {
+    public List<TaskProjection> findAllByUserId(Long userId) {
 
         UserSpringSecurity userSpringSecurity = authenticated();
         if (!Objects.nonNull(userSpringSecurity)
                 || !userSpringSecurity.hasRole(ProfileEnum.ADMIN) && !userId.equals(userSpringSecurity.getUser().getId())) {
             throw new AuthorizationException("Acesso negado!");
         }
-        List<Task> task = this.taskRepository.findByUser_Id(userId);
+        List<TaskProjection> task = this.taskRepository.findByUser_Id(userId);
 
         return task;
     }

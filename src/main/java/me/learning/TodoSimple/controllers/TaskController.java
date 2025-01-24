@@ -3,6 +3,7 @@ package me.learning.TodoSimple.controllers;
 import jakarta.servlet.ServletRequest;
 import jakarta.validation.Valid;
 import me.learning.TodoSimple.models.Task;
+import me.learning.TodoSimple.models.projection.TaskProjection;
 import me.learning.TodoSimple.services.TaskService;
 import me.learning.TodoSimple.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +33,9 @@ public class TaskController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Task>> findAllByUserId(@PathVariable Long userId){
+    public ResponseEntity<List<TaskProjection>> findAllByUserId(@PathVariable Long userId){
         this.userService.findById(userId);
-        List<Task> objs = this.taskService.findAllByUserId(userId);
+        List<TaskProjection> objs = this.taskService.findAllByUserId(userId);
         return ResponseEntity.ok().body(objs);
     }
 

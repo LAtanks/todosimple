@@ -1,6 +1,9 @@
 package me.learning.TodoSimple.services;
 
+import jakarta.validation.Valid;
 import me.learning.TodoSimple.models.User;
+import me.learning.TodoSimple.models.dto.UserCreateDTO;
+import me.learning.TodoSimple.models.dto.UserUpdateDTO;
 import me.learning.TodoSimple.models.enums.ProfileEnum;
 import me.learning.TodoSimple.repositories.IUserRepository;
 import me.learning.TodoSimple.security.UserSpringSecurity;
@@ -68,5 +71,18 @@ public class UserService {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public User fromDTO(@Valid UserCreateDTO obj){
+        User user = new User();
+        user.setUsername(obj.getUsername());
+        user.setPassword(obj.getPassword());
+        return user;
+    }
+    public User fromDTO(@Valid UserUpdateDTO obj){
+        User user = new User();
+        user.setId(obj.getId());
+        user.setPassword(obj.getPassword());
+        return user;
     }
 }

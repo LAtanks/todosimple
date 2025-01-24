@@ -1,8 +1,6 @@
 package me.learning.TodoSimple.exceptions;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +15,6 @@ public class ErrorResponse {
     private final String message;
     private String stackTrace;
     private List<ValidationError> errors;
-
 
     @RequiredArgsConstructor
     private static class ValidationError{

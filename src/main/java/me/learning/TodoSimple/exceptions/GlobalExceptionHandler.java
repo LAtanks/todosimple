@@ -10,6 +10,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import me.learning.TodoSimple.services.exceptions.AuthorizationException;
 import me.learning.TodoSimple.services.exceptions.DataBindingViolationException;
+import me.learning.TodoSimple.services.exceptions.InvalidPasswordException;
 import me.learning.TodoSimple.services.exceptions.ObjectNotFoundException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.validation.FieldError;
@@ -87,8 +89,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                 HttpStatus.CONFLICT,
                 webRequest
         );
-
-
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -143,10 +143,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
     public ResponseEntity<Object> handleAccessDeniedException(
             AccessDeniedException accessDeniedException,
             WebRequest request) {
-        log.error("Authorization error ", accessDeniedException);
+        log.error("Access Denied error ", accessDeniedException);
         return buildErrorResponse(
                 accessDeniedException,
-                HttpStatus.FORBIDDEN,
+                HttpStatus.UNAUTHORIZED,
                 request);
     }
 
@@ -162,12 +162,33 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                 request);
     }
 
+    @ExceptionHandler(InvalidPasswordException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<Object> handleInvalidPasswordException(
+            InvalidPasswordException invalidPasswordException,
+            WebRequest request
+    ){
+        log.error("Invalid password: ", invalidPasswordException);
+        return buildErrorMessage(
+                invalidPasswordException,invalidPasswordException.getMessage(), HttpStatus.UNAUTHORIZED, request
+        );
+    }
+
     @ExceptionHandler(JWTDecodeException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Object> handleJWTDecodeException(JWTDecodeException ex, WebRequest webRequest) {
 
 
         return buildErrorMessage(ex, ex.getMessage(), HttpStatus.BAD_REQUEST, webRequest);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handleBadCredentialsException(
+            BadCredentialsException badCredentialsException, WebRequest webRequest
+    ){
+        log.error("Username or password invalid", badCredentialsException);
+        return buildErrorMessage(badCredentialsException, badCredentialsException.getMessage(), HttpStatus.BAD_REQUEST, webRequest);
     }
 
     private ResponseEntity<Object> buildErrorResponse(
@@ -199,7 +220,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
 
         response.setStatus(status);
         response.setContentType("application/json");
-        ErrorResponse errorResponse = new ErrorResponse(status, "Invalid E-mail or password");
+        ErrorResponse errorResponse = new ErrorResponse(status, "Invalid Username or password");
         response.getWriter().append(errorResponse.toJson());
     }
 }

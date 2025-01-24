@@ -41,7 +41,7 @@ public class SecurityConfig {
             "/"
     };
     private static final String[] PUBLIC_MATCHERS_POST = {
-            "/user",
+            "/user/",
             "/task",
             "/auth/login",
             "/auth/register"
@@ -68,6 +68,8 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
+
 
     public HttpServletRequest getCurrentHttpRequest() {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
