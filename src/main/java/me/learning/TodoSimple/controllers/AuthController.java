@@ -2,7 +2,6 @@ package me.learning.TodoSimple.controllers;
 import jakarta.validation.Valid;
 import me.learning.TodoSimple.models.User;
 import me.learning.TodoSimple.security.JWTUtil;
-import me.learning.TodoSimple.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,12 +21,10 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
-    private UserDetailsServiceImpl userDetailsService;
-    @Autowired
     private JWTUtil jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid User data) {
+    public ResponseEntity<Object> login(@RequestBody @Valid User data) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -36,11 +33,7 @@ public class AuthController {
                 )
         );
 
-        String token = jwtUtil.generateToken(data.getUsername());
+        return ResponseEntity.ok().body(Map.of("token", "Bearer " + this.jwtUtil.generateToken(data) ));
 
-        return ResponseEntity.ok().body(Map.of("token", "Bearer "+token));
-
-
-       // return ResponseEntity.ok().body(token);
     }
 }

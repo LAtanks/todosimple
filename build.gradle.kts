@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "me.learning"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1"
 
 java {
 	toolchain {
@@ -13,6 +13,23 @@ java {
 	}
 }
 
+tasks.bootJar {
+	manifest {
+		attributes["Main-Class"] = "me.learning.TodoSimple.TodoSimpleApplication"
+	}
+
+	archiveBaseName.set("todosimple")
+	archiveFileName.set("todosimple.jar")
+
+}
+tasks.jar{
+	manifest {
+		attributes["Main-Class"] = "me.learning.TodoSimple.TodoSimpleApplication"
+	}
+
+	archiveBaseName.set("todosimple")
+	archiveFileName.set("todosimple.jar")
+}
 configurations {
 	compileOnly {
 		extendsFrom(configurations.annotationProcessor.get())
@@ -28,6 +45,15 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation ("org.springframework.boot:spring-boot-starter-security")
+	implementation("org.springframework.boot:spring-boot-starter")
+
+	configurations.all {
+		resolutionStrategy.eachDependency {
+			if (requested.group == "org.springframework.boot") {
+				useVersion("3.4.1")
+			}
+		}
+	}
 
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
@@ -41,11 +67,9 @@ dependencies {
 
 	implementation("org.apache.commons:commons-lang3")
 
-	implementation("io.jsonwebtoken:jjwt:0.12.6")
-	implementation("io.jsonwebtoken:jjwt-api:0.12.6")
-	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
-	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
-	implementation("com.auth0:java-jwt:4.4.0")
+	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
 
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 }

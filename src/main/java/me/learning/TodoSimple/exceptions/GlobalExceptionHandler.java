@@ -1,8 +1,5 @@
 package me.learning.TodoSimple.exceptions;
 
-import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -172,14 +169,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
         return buildErrorMessage(
                 invalidPasswordException,invalidPasswordException.getMessage(), HttpStatus.UNAUTHORIZED, request
         );
-    }
-
-    @ExceptionHandler(JWTDecodeException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Object> handleJWTDecodeException(JWTDecodeException ex, WebRequest webRequest) {
-
-
-        return buildErrorMessage(ex, ex.getMessage(), HttpStatus.BAD_REQUEST, webRequest);
     }
 
     @ExceptionHandler(BadCredentialsException.class)

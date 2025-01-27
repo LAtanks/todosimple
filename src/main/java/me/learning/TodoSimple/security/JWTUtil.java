@@ -1,75 +1,88 @@
 package me.learning.TodoSimple.security;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwt;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import me.learning.TodoSimple.models.User;
 import me.learning.TodoSimple.repositories.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.security.Key;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 @Component
 public class JWTUtil {
 
-    @Autowired
-    private IUserRepository service;
-    @Value("${jwt.secret}")
+    @Value("${token.secret.key}")
     private String secret;
-    @Value("${jwt.expiration}")
+
+    @Value("${token.expirationms}")
     private Long expiration;
 
-    public String generateToken(User user){
-        try{
-            Algorithm algorithm = Algorithm.HMAC256(secret);
-            String token = JWT.create()
-                    .withIssuer("auth-api")
-                    .withSubject(user.getUsername())
-                    .withExpiresAt(genExpirationDate())
-                    .sign(algorithm);
-            return token;
-        } catch (JWTCreationException exception) {
-            throw new RuntimeException("Error while generating token", exception);
-        }
-    }
-
-    public String generateToken(String username){
-        User obj = this.service.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-        return this.generateToken(obj);
-    }
-
-    public String validateToken(String token) {
-        try {
-            Algorithm algorithm = Algorithm.HMAC256(secret);
-            return JWT.require(algorithm)
-                    .withIssuer("auth-api")
-                    .build()
-                    .verify(token)
-                    .getSubject();
-        } catch (Exception e){
-           if(e instanceof JWTVerificationException)throw new JWTVerificationException(e.getMessage(), e);
-           if(e instanceof JWTCreationException)throw new JWTCreationException(e.getMessage(), e);
-           return "";
-        }
-    }
-
-    private Instant genExpirationDate(){
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
-    }
+    @Autowired
+    private IUserRepository userRepository;
 
 
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder(){
-        return new BCryptPasswordEncoder();
+    public String extractUserName(String token) {
+        return extractClaim(token, Claims::getSubject);
     }
+
+    public String generateToken(User userDetails) {
+        return generateToken(new HashMap<>(), userDetails);
+    }
+
+    public boolean isTokenValid(String token, User userDetails) {
+        final String userName = extractUserName(token);
+        return (userName.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    }
+
+    private <T> T extractClaim(String token, Function<Claims, T> claimsResolvers) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolvers.apply(claims);
+    }
+
+    private String generateToken(Map<String, Object> extraClaims, User userDetails) {
+        return Jwts
+                .builder()
+                .setClaims(extraClaims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    private boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    private Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts
+                .parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    private Key getSigningKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
 }
