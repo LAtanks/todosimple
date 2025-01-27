@@ -1,81 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root{
+    --font-famiy: "Poppins", serif;
+}
+
 *{
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: var(--font-famiy);
 }
+
+body{
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
 main{
-    height: 100vh;
-    width: 100vw;
+    float: right;
+    width: 50vw;
+    height: 105vh;
+
     background-color: aliceblue;
-    text-align: center;
+
+    padding: 50px;
 }
 
-span#error-message{
+main h1{
+    margin: 25px;
+    font-size: 36px;
+}
+
+div#credentials{
+    margin: 25px;
+    margin-top: 60px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+div#credentials > div{
+    margin: 20px 0;;
+    flex-direction: column;
+}
+
+div#credentials span.error-message{
+    font-size: 12px;
+    font-weight: 500;
     color: red;
-    font-size: 20pt;
-
-    margin: auto;
-    position: relative;
-    top: 20vh;
-
-    display: none;
+    display: block;
+}
+div#credentials #username & #password span::after{
+    content: " *";
+    color: red;
 }
 
-div#loginPage{
-    width: 250px;
-    height: 250px;
-    background-color: azure;
+div#credentials input{
+    border-radius: 15px;
+    border-color: rgba(0, 0, 0, 0.274);
 
-    margin: auto;
-    padding: 20px;
-    position: relative;
-    top: 25vh;
+    width: 280px;
+    height: 52px;
 
-    border-style: solid;
-    border-radius: 10px;
-
-    text-align: center;
-    align-items: center;
-    align-self: center;
-    align-content: center;
+    padding: 10px;
+    margin-bottom: 15px;
 }
 
-div#loginPage span{
-    font-size: 25pt;
-    font-weight: bold;   
-}
-div#loginPage input{
-    margin: 10px;
-    border-radius: 25px;
-    border-style: solid;
-    border-color: gainsboro;
-    padding: 5px;
-    transition: .2s;
-}
-div#loginPage input::placeholder{
-    opacity: 0.5;
+div#credentials input::placeholder{
+    font-size: 12pt;
+    color: rgba(0, 0, 0, 0.459);
+    font-weight: 100;
 }
 
-div#loginPage input:focus{
-    outline: none !important;
-    border:3px solid rgb(83, 83, 83);
-}
+button.btn{
+    background-color: #212121;
 
-div#loginPage input#submit{
-    margin-top: 15px;
-    width: 120px;
-    padding: 2px;
-    background-color: orange;
-    color: white;
     font-size: 14pt;
+    color: white;
+    font-weight: 600;
 
-    border-radius: 15px;
-    border-style: solid;
-    border-color: gainsboro;
+    letter-spacing: 20%;
+
+    width: 220px;
+    height: 45px;
+    transition: .2s;
+
+    display: block;
+
+    margin: auto;
+    margin-top: 30px;
+    
 }
-div#loginPage input#submit:hover{
-    border-radius: 15px;
-    border-style: solid;
-    border-color: rgb(83, 83, 83);
+
+button.btn:hover{
+    background-color: #414141;
+    color: white;
+}
+
+main h2.error-message{
+    margin: auto;
+    display: block;
+    text-align: center;
+
+    margin-top: 25px;
+    margin-bottom: 25px;
+
+    color: red;
+    font-size: 16px;
+}
+
+main > a{
+    margin: auto;
+    display: block;
+    text-align: center;
 }
