@@ -1,104 +1,225 @@
-const api = "http://localhost:8080/";
+const BASE_URL = "http://localhost:8080";
 
-document.querySelector("button#login").addEventListener("click", function(){
-    submit("login");
-})
-document.querySelector("button#register").addEventListener("click", function(){
-    submit("user");
-})
-
-function showErrorMsg(msg){
-    let errorSpan = document.querySelector("main").querySelector("h2.error-message");
-    errorSpan.innerHTML = msg
+function showInfo(message) {
+    const overlay = document.getElementById('infoOverlay');
+    const infoMessage = document.getElementById('infoMessage');
+    
+    // Set error message
+    infoMessage.textContent = message;
+    
+    // Show overlay with fade effect
+    overlay.style.display = 'flex';
+    overlay.style.opacity = '0';
+    setTimeout(() => {
+        overlay.style.opacity = '1';
+    }, 10);
 }
 
-function submit(type){
-    let username = document.getElementById("username-input").value;
-    let password = document.getElementById("password-input").value;
+// Function to hide error
+function hideInfo() {
+    const overlay = document.getElementById('infoOverlay');
+    overlay.style.opacity = '0';
+    setTimeout(() => {
+        overlay.style.display = 'none';
+    }, 200);
+}
 
-    let errorUsername = document.getElementById("username").querySelector("span.error-message");
-    let errorPassword = document.getElementById("password").querySelector("span.error-message");;
+// Close modal when clicking outside
+document.getElementById('infoOverlay').addEventListener('click', function(e) {
+    if (e.target === this) {
+        hideError();
+    }
+});
 
-    if(username === "" || username==null) {
-        console.log("Username nao pode ser vazio")
-        errorUsername.innerHTML = "Username não pode ser vazio";
+// Prevent modal close when clicking inside the modal
+document.querySelector('.modal').addEventListener('click', function(e) {
+    e.stopPropagation();
+});
 
-        return;
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        hideError();
+    }
+});
+
+function showErrorMessage(){
+    const usernameInput = document.querySelector("#username");
+    const passwordInput = document.querySelector("#password");
+
+    const usernameError = document.querySelector("div#error-username");
+    const passwordError = document.querySelector("div#error-password");
+
+    usernameError.innerHTML = "";
+    passwordError.innerHTML = "";
+
+    if(usernameInput.value === '' || usernameInput == null ){
+        usernameError.style.display = "block";
+        usernameError.innerHTML = "Username não pode ser vazio";
+        
+        usernameInput.addEventListener("invalid",function (e){
+            console.log(e)
+        })
+        return false;
+    }
+    else if(usernameInput.value.length < 2){
+        usernameError.style.display = "block";
+        usernameError.innerText = "Username precisar ser maior que 2 caracteres";
+
+        usernameInput.addEventListener("invalid",function (e){
+            console.log(e)
+        })
+        
+        return false;
+    }
+    else if(usernameInput.value.length > 100){
+        usernameError.style.display = "block";
+        usernameError.innerText = "Username precisar ser menor que 100 caracteres";
+        
+        usernameInput.addEventListener("invalid", (e)=>{
+            console.log(e)
+        })
+        return false;
+    }
+
+    var passwordvalue =  passwordInput.value;
+
+    if(passwordInput.value === "" || passwordInput == null){
+        passwordError.style.display = "block";
+        passwordError.innerHTML = "A senha não pode ser vazia";
+
+        return false;
+    }
+    else if(passwordvalue.length < 8){
+        passwordError.style.display = "block";
+        passwordError.innerHTML = "A senha tem que ser maior que 8 caratecteres";
+
+        return false;
+    }
+    else if(passwordvalue.length > 60){
+        passwordError.style.display = "block";
+        passwordError.innerHTML = "A senha tem que ser menor que 60 caratecteres";
+
+        return false;
+    }
+
+    return true;
+}
+document.getElementById('loginForm').addEventListener('submit', submit);
+
+async function submit(e) {
+   //if(!showErrorMessage()) return;
+
+    e.preventDefault();
+    
+    const username = document.getElementById('username');
+    const password = document.getElementById('password');
+    console.log(username.value.toString(), password.value.toString())
+
+    // Simple validation
+    if(!showErrorMessage()) return;
+    
+    const response = await loginUser(username.value, password.value);
+
+    if(response.ok){
+        //const data = await response.json();
+        console.log("User successfully loged in");
+        
+        const {token} = await response.json();
+        console.log(token, response);
+        window.localStorage.setItem("Authorization", token);
+
+        console.log(window.localStorage.getItem("Authorization")); 
+
+        window.setTimeout(function () {
+           window.location = "../homePage.html";
+          }, 2000) 
     }else{
-        errorUsername.innerHTML = ""
-    }
+        const data = await response.json();
 
-    if(password === ""){
-        console.log("Senha não pode ser vazia");
-        errorPassword.innerHTML= "Senha não pode ser vazia";
-
+        showInfo("Error: " + data.message)
+        console.error(data);
         return;
     }
-    else if(password < 8 || password === "" ) {
-        console.log("A senha precisa ser maior que 8");
-        errorPassword.innerHTML = "A senha precisa ser maior que 8!"
 
-        return;
+    // Here you would typically make an API call to your backend
+    console.log('Form submitted:', {
+        username: username.value,
+        password: password.value
+    });
+}
+
+document.querySelector(".btn-secondary").addEventListener('click', async function(e) {
+    if(!showErrorMessage()) return;
+
+    e.preventDefault();
+    
+    const username = document.getElementById('username');
+    const password = document.getElementById('password');
+    
+    // Simple validation
+    if(!showErrorMessage()) return;
+    
+    
+    const response = await registerUser(username.value, password.value);
+
+    if(response.ok){
+        showInfo("User successfully created. Now loged in")
+        console.log("User successfully created");
+
     }else{
-        errorPassword.innerHTML = ""
+        const data = await response.json();
+
+        showInfo("Error: " + data.message)
+        console.error(data);
+        return;
     }
 
-    sign(type);
-}
+    // Here you would typically make an API call to your backend
+    console.log('Form submitted:', {
+        username: username.value,
+        password: password.value
+    });
+});
 
-async function sign(type){
-    let username = document.getElementById("username-input").value;
-    let password = document.getElementById("password-input").value;
-
-    try {
-        if(type === "user") getAPI("user", username, password);
-        if(type === "login") getAPI("auth/login", username, password);
-    } catch (error) {
-        showErrorMsg(error)
-    }
-}
-
-async function getAPI(setMethod, username, password) {
-
+async function registerUser(username, password){
     let header = new Headers();
     header.append("Content-Type", "application/json; charset=utf8");
-    header.append("Accept", "application/json")
 
+    try {
+        const response = await fetch(`${BASE_URL}/user`, {
+            method: "POST",
+            headers: header,
+            body: JSON.stringify({ username, password }),
+        });
 
-    const response = await fetch(`http://localhost:8080/${setMethod}`, {
-        method: "POST",
-        headers: header,
-        body: JSON.stringify({ username, password }),
-        }).then(async function(request){
-            if (request.ok) {
-                const { token } = await request.json();
-                header.append("Authorization", token);
-                window.localStorage.setItem("Authorization", token);
-                console.log(window.localStorage.getItem("Authorization"));    
-                window.setTimeout(function () {
-                    window.location = "./index.html";
-                  }, 2000);
-            } 
-            else {
-            console.log(request.status);
-
-            switch (request.status){
-                case 400:
-                    showErrorMsg("Bad credentials");
-                    break;
-                case 401:
-                    showErrorMsg("UNAUTHORIZED invalid passoword");
-                    break;
-                case 403:
-                    showErrorMsg("Access denied or authorization error");
-                    break;
-                case 409:
-                    showErrorMsg("Failed to save entity with associated data");
-                    break;
-                default:
-                    showErrorMsg("Unknown error occurred");
-            }
-            throw new Error('Login failed');
-            }
-        })   
+        return response;
+    } catch (error) {
+        
+        showInfo("NetWork error: " + error.message )
+        console.error(response);
+        throw error;
+    }
 }
+
+async function loginUser(username, password)
+{
+    let header = new Headers();
+    header.append("Content-Type", "application/json; charset=utf8");
+
+    try {
+        const response = await fetch(`${BASE_URL}/auth/login`, {
+            method: "POST",
+            headers: header,
+            body: JSON.stringify({ username, password }),
+        });
+
+        return response;
+    } catch (error) {
+        
+        showInfo("NetWork error: " + error.message )
+        console.error(response);
+        throw error;
+    }
+}
+

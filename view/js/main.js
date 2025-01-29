@@ -1,70 +1,163 @@
-const apiUrl = "http://localhost:8080/task/user/6";
 
-function show(tasks) {
-    let tab = `<thead>
-              <th scope="col">#</th>
-              <th scope="col">Name</th>
-              <th scope="col">Description</th>
-          </thead>`;
-  
-    for (let task of tasks) {
-      tab += `
-              <tr>
-                  <td scope="row">${task.id}</td>
-                  <td scope="row">${task.name}</td>
-                  <td>${task.description}</td>
-              </tr>
-          `;
-    }
-  
-    document.getElementById("tasks").innerHTML = tab;
-  }
+const BASE_URL = "http://localhost:8080/task"
 
-async function getAPI() {
-    console.log(window.localStorage.getItem("Authorization"));
+document.getElementById('createTaskForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('name').value;
+    const description = document.getElementById('description').value;
+    const endAt = document.getElementById('end-at').value;
 
-    const response = await fetch(apiUrl, {
-        method: "GET",
-        headers: new Headers({
-            Authorization: localStorage.getItem("Authorization"),
-            "Content-Type": "application/json; charset=utf8",
-            Accept: "application/json",
-        }),
-        })/*.then(async function(request){
-            if (request.ok) {    
-                
-            }
-            else {
-                console.log(request.status);
-                    switch (request.status){
-                        case 400:
-                            console.log("Bad credentials");
-                            break;
-                        case 401:
-                            console.log("UNAUTHORIZED invalid passoword");
-                            break;
-                        case 403:
-                            console.log("Access denied or authorization error");
-                            break;
-                        case 409:
-                            console.log("Failed to save entity with associated data");
-                            break;
-                        default:
-                            console.log("Unknown error occurred");
-                    }
-                    throw new Error('Login failed');
-                }
-                
-        }) */
-        var data = await response.json();
-        show(data);
+    createTask(name, description, endAt );
+    
+    updateTaskTable();
+   // this.reset();
+});
+
+document.getElementById('deleteTaskForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const taskId = parseInt(document.getElementById('taskId').value);
+    deleteTask(taskId);
+    updateTaskTable();
+    this.reset();
+});
+
+async function updateTaskTable() {
+    const tbody = document.getElementById('taskTableBody');
+    tbody.innerHTML = '';
+
+    const response = await getTasks();
+
+    const data = await response.json();
+    let tasks = data;
+
+    tasks.forEach(task => {
+        let created = new Date(Date.UTC(task.createdAt[0],  // year
+            task.createdAt[1],  // month (0-11)
+            task.createdAt[2],  // day
+            task.createdAt[3],  // hour
+        ))
+        
+        let end = new Date(Date.UTC(task.endAt[0],  // year
+            task.endAt[1],  // month (0-11)
+            task.endAt[2],  // day
+            task.endAt[3],  // hour
+        ))
+
+        const options = { 
+            year: 'numeric', 
+            month: 'numeric', 
+            day: 'numeric',
+        };
+          
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${task.id}</td>
+            <td>${task.title}</td>
+            <td>${task.description}</td>
+            <td>${created.toLocaleDateString("pt-br", options)}</td>
+            <td>${end.toLocaleDateString("pt-br", options)}</td>
+        `;
+        tbody.appendChild(row);
+    });
 }
 
-document.addEventListener("DOMContentLoaded", function (event) {
-    if (!localStorage.getItem("Authorization"))
-      window.location = "./sign.html";
-});
-  
+async function getTasks()
+{
+    let header = new Headers();
+    header.append("Content-Type", "application/json; charset=utf8");
+    header.append("Authorization", window.localStorage.getItem("Authorization"))
 
-getAPI();
+    try {
+        const response = await fetch(`${BASE_URL}/user/1`, {
+            method: "GET",
+            headers: header,
+        });
 
+        return response;
+    } catch (error) {
+        console.error('Network error:', error);
+        throw error;
+    }
+}
+
+async function createTask(title, description, endAt)
+{   
+    let dateConvert = endAt.split("-").map(Number);
+    dateConvert.push(0,0,0,0)
+    let raw = JSON.stringify({
+        "title": title,
+        "description": description,
+        "endAt": dateConvert
+     });
+
+    let header = new Headers();
+    header.append("Content-Type", "application/json; charset=utf8");
+    header.append("Authorization", window.localStorage.getItem("Authorization"))
+
+    try {
+        const response = await fetch(`${BASE_URL}`, {
+            method: "POST",
+            headers: header,
+            body: raw
+        });
+
+    } catch (error) {
+        console.error('Network error:', error);
+        throw error;
+    }
+}
+
+async function deleteTask(id)
+{   
+
+    let header = new Headers();
+    header.append("Content-Type", "application/json; charset=utf8");
+    header.append("Authorization", window.localStorage.getItem("Authorization"))
+
+    try {
+        const response = await fetch(`${BASE_URL}/${id}`, {
+            method: "DELETE",
+            headers: header,
+        });
+
+    } catch (error) {
+        console.error('Network error:', error);
+        throw error;
+    }
+}
+
+renderUserInfo();
+
+async function renderUserInfo() {
+    
+    const response = await getUser();
+
+    const data = await response.json();
+
+    document.querySelector("#user-name").innerHTML = `User name: ${data.username}`
+    document.querySelector("#user-id").innerHTML = `User ID: ${data.id}`
+}
+
+async function getUser()
+{
+    let header = new Headers();
+    header.append("Content-Type", "application/json; charset=utf8");
+    header.append("Authorization", window.localStorage.getItem("Authorization"))
+
+    try {
+        const response = await fetch(`http://localhost:8080/user/me`, {
+            method: "GET",
+            headers: header,
+        });
+
+        return response;
+    } catch (error) {
+        console.error('Network error:', error);
+        throw error;
+    }
+}
+
+updateTaskTable();
