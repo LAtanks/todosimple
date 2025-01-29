@@ -28,37 +28,18 @@ async function updateTaskTable() {
     tbody.innerHTML = '';
 
     const response = await getTasks();
-
     const data = await response.json();
     let tasks = data;
 
-    tasks.forEach(task => {
-        let created = new Date(Date.UTC(task.createdAt[0],  // year
-            task.createdAt[1],  // month (0-11)
-            task.createdAt[2],  // day
-            task.createdAt[3],  // hour
-        ))
-        
-        let end = new Date(Date.UTC(task.endAt[0],  // year
-            task.endAt[1],  // month (0-11)
-            task.endAt[2],  // day
-            task.endAt[3],  // hour
-        ))
-
-        const options = { 
-            year: 'numeric', 
-            month: 'numeric', 
-            day: 'numeric',
-        };
-          
+    tasks.forEach(task => {  
 
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${task.id}</td>
             <td>${task.title}</td>
             <td>${task.description}</td>
-            <td>${created.toLocaleDateString("pt-br", options)}</td>
-            <td>${end.toLocaleDateString("pt-br", options)}</td>
+            <td>${task.createdAt[2]}/${task.createdAt[1]}/${task.createdAt[0]}</td>
+            <td>${task.endAt[2]}/${task.endAt[1]}/${task.endAt[0]}</td>
         `;
         tbody.appendChild(row);
     });
@@ -78,7 +59,7 @@ async function getTasks()
 
         return response;
     } catch (error) {
-        console.error('Network error:', error);
+        showInfo("Erro de conexão")
         throw error;
     }
 }
@@ -90,9 +71,16 @@ async function createTask(title, description, endAt)
     let raw = JSON.stringify({
         "title": title,
         "description": description,
-        "endAt": dateConvert
+        "endAt": [
+            dateConvert[0],
+            dateConvert[1],
+            dateConvert[2],
+            dateConvert[3],
+            dateConvert[4],
+            dateConvert[5],
+            dateConvert[6],
+        ]
      });
-
     let header = new Headers();
     header.append("Content-Type", "application/json; charset=utf8");
     header.append("Authorization", window.localStorage.getItem("Authorization"))
@@ -105,7 +93,7 @@ async function createTask(title, description, endAt)
         });
 
     } catch (error) {
-        console.error('Network error:', error);
+        showInfo("Erro de conexão")
         throw error;
     }
 }
@@ -124,7 +112,7 @@ async function deleteTask(id)
         });
 
     } catch (error) {
-        console.error('Network error:', error);
+        showInfo("Erro de conexão")
         throw error;
     }
 }
@@ -137,8 +125,8 @@ async function renderUserInfo() {
 
     const data = await response.json();
 
-    document.querySelector("#user-name").innerHTML = `User name: ${data.username}`
-    document.querySelector("#user-id").innerHTML = `User ID: ${data.id}`
+    document.querySelector("#user-name").innerHTML = `Nome de usuário: ${data.username}`
+    document.querySelector("#user-id").innerHTML = `ID de usuário: ${data.id}`
 }
 
 async function getUser()
@@ -155,9 +143,37 @@ async function getUser()
 
         return response;
     } catch (error) {
-        console.error('Network error:', error);
+        showInfo("Erro de conexão");
         throw error;
     }
+}
+
+function showInfo(message) {
+    const overlay = document.getElementById('infoOverlay');
+    const infoMessage = document.getElementById('infoMessage');
+    
+    // Set error message
+    infoMessage.textContent = message;
+    
+    // Show overlay with fade effect
+    overlay.style.display = 'flex';
+    overlay.style.opacity = '0';
+    setTimeout(() => {
+        overlay.style.opacity = '1';
+    }, 10);
+}
+
+// Function to hide error
+function hideInfo() {
+    const overlay = document.getElementById('infoOverlay');
+    overlay.style.opacity = '0';
+    setTimeout(() => {
+        overlay.style.display = 'none';
+    }, 200);
+
+    window.setTimeout(function () {
+        window.location = "../signPage.html";
+       }, 500) 
 }
 
 updateTaskTable();

@@ -57,28 +57,18 @@ function showErrorMessage(){
         usernameError.style.display = "block";
         usernameError.innerHTML = "Username não pode ser vazio";
         
-        usernameInput.addEventListener("invalid",function (e){
-            console.log(e)
-        })
         return false;
     }
     else if(usernameInput.value.length < 2){
         usernameError.style.display = "block";
         usernameError.innerText = "Username precisar ser maior que 2 caracteres";
-
-        usernameInput.addEventListener("invalid",function (e){
-            console.log(e)
-        })
         
         return false;
     }
     else if(usernameInput.value.length > 100){
         usernameError.style.display = "block";
         usernameError.innerText = "Username precisar ser menor que 100 caracteres";
-        
-        usernameInput.addEventListener("invalid", (e)=>{
-            console.log(e)
-        })
+
         return false;
     }
 
@@ -114,22 +104,16 @@ async function submit(e) {
     
     const username = document.getElementById('username');
     const password = document.getElementById('password');
-    console.log(username.value.toString(), password.value.toString())
 
     // Simple validation
     if(!showErrorMessage()) return;
     
     const response = await loginUser(username.value, password.value);
 
-    if(response.ok){
-        //const data = await response.json();
-        console.log("User successfully loged in");
+    if(response.ok){;
         
         const {token} = await response.json();
-        console.log(token, response);
         window.localStorage.setItem("Authorization", token);
-
-        console.log(window.localStorage.getItem("Authorization")); 
 
         window.setTimeout(function () {
            window.location = "../homePage.html";
@@ -138,15 +122,8 @@ async function submit(e) {
         const data = await response.json();
 
         showInfo("Error: " + data.message)
-        console.error(data);
         return;
     }
-
-    // Here you would typically make an API call to your backend
-    console.log('Form submitted:', {
-        username: username.value,
-        password: password.value
-    });
 }
 
 document.querySelector(".btn-secondary").addEventListener('click', async function(e) {
@@ -164,22 +141,14 @@ document.querySelector(".btn-secondary").addEventListener('click', async functio
     const response = await registerUser(username.value, password.value);
 
     if(response.ok){
-        showInfo("User successfully created. Now loged in")
-        console.log("User successfully created");
-
+        showInfo("Usuário criado com sucesso. Agore Entre com ele")
     }else{
         const data = await response.json();
 
-        showInfo("Error: " + data.message)
-        console.error(data);
+        showInfo("Erro: " + data.message)
         return;
     }
 
-    // Here you would typically make an API call to your backend
-    console.log('Form submitted:', {
-        username: username.value,
-        password: password.value
-    });
 });
 
 async function registerUser(username, password){
@@ -196,8 +165,7 @@ async function registerUser(username, password){
         return response;
     } catch (error) {
         
-        showInfo("NetWork error: " + error.message )
-        console.error(response);
+        showInfo("Erro de conexão: " + error.message )
         throw error;
     }
 }
@@ -217,8 +185,7 @@ async function loginUser(username, password)
         return response;
     } catch (error) {
         
-        showInfo("NetWork error: " + error.message )
-        console.error(response);
+        showInfo("Erro de conexão: " + error.message )
         throw error;
     }
 }
