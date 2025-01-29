@@ -51,8 +51,12 @@ async function getTasks()
     header.append("Content-Type", "application/json; charset=utf8");
     header.append("Authorization", window.localStorage.getItem("Authorization"))
 
+    const response = await getUser();
+
+    const data = await response.json();
+
     try {
-        const response = await fetch(`${BASE_URL}/user/1`, {
+        const response = await fetch(`${BASE_URL}/user/${data.id}`, {
             method: "GET",
             headers: header,
         });
