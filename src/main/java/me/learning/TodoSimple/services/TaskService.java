@@ -52,7 +52,7 @@ public class TaskService {
         }
         Optional<Task> task = this.taskRepository.findById(id);
 
-        return task.orElseThrow(() -> new ObjectNotFoundException("Task id: "+ id +" don't exists"));
+        return task.orElseThrow(() -> new ObjectNotFoundException("Id de tarefa: "+ id +" não existe."));
     }
 
     @Transactional
@@ -65,11 +65,11 @@ public class TaskService {
         LocalDateTime now = LocalDateTime.now();
 
         if(Objects.isNull(obj.getEndAt())){
-           obj.setEndAt(obj.getEndAt());
+            obj.setEndAt(obj.getEndAt());
         }
 
         if(obj.getEndAt().isBefore(now) || obj.getEndAt().isEqual(now)){
-            throw new DataBindingViolationException("The end date must be greater than the current date.");
+            throw new DataBindingViolationException("A data de término deve ser posterior à data atual.");
         }
 
         obj = this.taskRepository.save(obj);
@@ -89,7 +89,7 @@ public class TaskService {
         try {
             this.taskRepository.deleteById(id);
         } catch (Exception e) {
-            throw new DataBindingViolationException("It is not possible to delete because there are related entities.");
+            throw new DataBindingViolationException("Não é possível eliminar porque existem entidades relacionadas.");
         }
     }
 

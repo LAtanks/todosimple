@@ -42,7 +42,7 @@ public class UserService {
         }
 
         Optional<User> user = this.userRepository.findById(id);
-        return user.orElseThrow(() -> new ObjectNotFoundException("User id: " + id +" don't exists"));
+        return user.orElseThrow(() -> new ObjectNotFoundException("Id de usuário: " + id +" não existe."));
     }
 
     @Transactional
@@ -53,7 +53,7 @@ public class UserService {
         try {
             obj = this.userRepository.save(obj);
         } catch (DataIntegrityViolationException  e) {
-            throw new DataIntegrityViolationException("Username already exists.");
+            throw new DataIntegrityViolationException("O nome de usuário já existe.");
         }
         return obj;
     }
@@ -71,7 +71,7 @@ public class UserService {
         try {
             this.userRepository.deleteById(id);
         } catch (Exception e) {
-            throw new DataBindingViolationException("It is not possible to delete, because there are related entities.");
+            throw new DataBindingViolationException("Não é possível eliminar, pois existem entidades relacionadas.");
         }
     }
 

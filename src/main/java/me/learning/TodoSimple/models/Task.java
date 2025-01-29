@@ -45,7 +45,7 @@ public class Task {
 
     @Column(name = "end_at", nullable = false)
     @JsonFormat(pattern="yyyy-MM-dd")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd")
     private LocalDateTime endAt;
 
     @Override

@@ -48,7 +48,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
     {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                "Validation error. Check 'errors' field for details."
+                "Erro de validação. Verifique o campo 'erros' para obter detalhes."
                 );
         for(FieldError fieldError : ex.getBindingResult().getFieldErrors()){
             errorResponse.addValidationError(fieldError.getField(), fieldError.getDefaultMessage());
@@ -63,7 +63,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
             Exception exception,
             WebRequest request)
     {
-        final String errorMessage = "Unknown error occurred";
+        final String errorMessage = "Ocorreu um erro desconhecido";
         log.error(errorMessage, exception);
         return buildErrorMessage(
                 exception,
@@ -80,7 +80,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
             WebRequest request
     ){
         String errorMessage = duplicateKeyException.initCause(duplicateKeyException).getMessage();
-        log.error("Failed to save entity with duplicate key: " + errorMessage, duplicateKeyException);
+        log.error("Falha ao salvar entidade com chave duplicada: " + errorMessage, duplicateKeyException);
         return buildErrorMessage(
                 duplicateKeyException,
                 errorMessage,
@@ -96,7 +96,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
             WebRequest webRequest
     ){
         String errorMessage = dataIntegrityViolationException.getMostSpecificCause().getMessage();
-        log.error("Failed to save entity with integrity problems: " + errorMessage, dataIntegrityViolationException);
+        log.error("Falha ao salvar entidade com problemas de integridade: " + errorMessage, dataIntegrityViolationException);
         return buildErrorMessage(
                 dataIntegrityViolationException,
                 errorMessage,
@@ -110,7 +110,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
     public ResponseEntity<Object> handleConstraintViolationException(
             ConstraintViolationException constraintViolationException,
             WebRequest request) {
-        log.error("Failed to validate element", constraintViolationException);
+        log.error("Falha ao validar o elemento", constraintViolationException);
         return buildErrorResponse(
                 constraintViolationException,
                 HttpStatus.UNPROCESSABLE_ENTITY,
@@ -122,7 +122,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
     public ResponseEntity<Object> handleObjectNotFoundException(
             ObjectNotFoundException objectNotFoundException,
             WebRequest request) {
-        log.error("Failed to find the requested element", objectNotFoundException);
+        log.error("Falha ao encontrar o elemento solicitado", objectNotFoundException);
         return buildErrorResponse(
                 objectNotFoundException,
                 HttpStatus.NOT_FOUND,
@@ -133,7 +133,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
     public ResponseEntity<Object> handleDataBindingViolationException(
             DataBindingViolationException dataBindingViolationException,
             WebRequest request) {
-        log.error("Failed to save entity with associated data", dataBindingViolationException);
+        log.error("Falha ao salvar entidade com dados associados", dataBindingViolationException);
         return buildErrorResponse(
                 dataBindingViolationException,
                 HttpStatus.CONFLICT,
@@ -145,7 +145,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
     public ResponseEntity<Object> handleAuthenticationException(
             AuthenticationException authenticationException,
             WebRequest request) {
-        log.error("Authentication error ", authenticationException);
+        log.error("Erro de autenticação ", authenticationException);
         return buildErrorResponse(
                 authenticationException,
                 HttpStatus.UNAUTHORIZED,
@@ -157,7 +157,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
     public ResponseEntity<Object> handleAccessDeniedException(
             AccessDeniedException accessDeniedException,
             WebRequest request) {
-        log.error("Access Denied error ", accessDeniedException);
+        log.error("Erro de acesso negado ", accessDeniedException);
         return buildErrorResponse(
                 accessDeniedException,
                 HttpStatus.FORBIDDEN,
@@ -169,7 +169,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
     public ResponseEntity<Object> handleAuthorizationException(
             AuthorizationException authorizationException,
             WebRequest request) {
-        log.error("Authorization error ", authorizationException);
+        log.error("Erro de autorização ", authorizationException);
         return buildErrorResponse(
                 authorizationException,
                 HttpStatus.FORBIDDEN,
@@ -182,7 +182,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
             InvalidPasswordException invalidPasswordException,
             WebRequest request
     ){
-        log.error("Invalid password: ", invalidPasswordException);
+        log.error("Senha inválida: ", invalidPasswordException);
         return buildErrorMessage(
                 invalidPasswordException,invalidPasswordException.getMessage(), HttpStatus.UNAUTHORIZED, request
         );
@@ -193,7 +193,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
     public ResponseEntity<Object> handleBadCredentialsException(
             BadCredentialsException badCredentialsException, WebRequest webRequest
     ){
-        log.error("Username or password invalid", badCredentialsException);
+        log.error("Nome de usuário ou senha inválidos", badCredentialsException);
         return buildErrorMessage(badCredentialsException, badCredentialsException.getMessage(), HttpStatus.BAD_REQUEST, webRequest);
     }
 
@@ -226,7 +226,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
 
         response.setStatus(status);
         response.setContentType("application/json");
-        ErrorResponse errorResponse = new ErrorResponse(status, "Invalid Username or password");
+        ErrorResponse errorResponse = new ErrorResponse(status, "Nome de usuário ou senha inválidos");
         response.getWriter().append(errorResponse.toJson());
     }
 }
