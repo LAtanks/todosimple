@@ -33,7 +33,7 @@ public class AuthController {
                 )
         );
 
-        return ResponseEntity.ok().body(Map.of("token", "Bearer " + this.jwtUtil.generateToken(data) ));
+        return ResponseEntity.ok().body(Map.of("token", "Bearer "+jwtUtil.generateToken(data)));
 
     }
 }

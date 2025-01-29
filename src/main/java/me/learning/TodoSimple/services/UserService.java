@@ -6,11 +6,14 @@ import me.learning.TodoSimple.models.dto.UserCreateDTO;
 import me.learning.TodoSimple.models.dto.UserUpdateDTO;
 import me.learning.TodoSimple.models.enums.ProfileEnum;
 import me.learning.TodoSimple.repositories.IUserRepository;
+import me.learning.TodoSimple.security.JWTUtil;
 import me.learning.TodoSimple.security.UserSpringSecurity;
 import me.learning.TodoSimple.services.exceptions.AuthorizationException;
 import me.learning.TodoSimple.services.exceptions.DataBindingViolationException;
 import me.learning.TodoSimple.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,9 @@ public class UserService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     private IUserRepository userRepository;
+    @Autowired
+    private JWTUtil jwtUtil;
+
 
     public User findById(Long id){
         UserSpringSecurity userSpringSecurity = authenticated();
@@ -44,7 +50,11 @@ public class UserService {
         obj.setId(null);
         obj.setPassword(this.bCryptPasswordEncoder.encode(obj.getPassword()));
         obj.setProfiles(Stream.of(ProfileEnum.USER.getCode()).collect(Collectors.toSet()));
-        obj = this.userRepository.save(obj);
+        try {
+            obj = this.userRepository.save(obj);
+        } catch (DataIntegrityViolationException  e) {
+            throw new DataIntegrityViolationException("Username already exists.");
+        }
         return obj;
     }
 

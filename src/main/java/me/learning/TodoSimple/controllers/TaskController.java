@@ -42,6 +42,7 @@ public class TaskController {
     @PostMapping
     @Validated
     public ResponseEntity<Task> create(@Valid @RequestBody Task obj){
+        System.out.println(obj.toString());
         this.taskService.create(obj);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()

@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -56,9 +57,21 @@ public class TaskService {
 
     @Transactional
     public Task create(Task obj){
-        User user = this.userService.findById(obj.getUser().getId());
+
+        User user = Objects.requireNonNull(UserService.authenticated()).getUser();
         obj.setId(null);
         obj.setUser(user);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        if(Objects.isNull(obj.getEndAt())){
+           obj.setEndAt(obj.getEndAt());
+        }
+
+        if(obj.getEndAt().isBefore(now) || obj.getEndAt().isEqual(now)){
+            throw new DataBindingViolationException("The end date must be greater than the current date.");
+        }
+
         obj = this.taskRepository.save(obj);
         return obj;
     }
@@ -67,6 +80,7 @@ public class TaskService {
     public Task update(Task obj){
         Task newObj = this.findById(obj.getId());
         newObj.setDescription(obj.getDescription());
+        newObj.setTitle(obj.getTitle());
         return this.taskRepository.save(newObj);
     }
 

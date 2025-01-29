@@ -12,6 +12,7 @@ import me.learning.TodoSimple.services.exceptions.ObjectNotFoundException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -68,6 +69,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                 exception,
                 errorMessage,
                 HttpStatus.INTERNAL_SERVER_ERROR,
+                request
+        );
+    }
+
+    @ExceptionHandler(DuplicateKeyException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<Object> handleDuplicateKeyException(
+            DuplicateKeyException duplicateKeyException,
+            WebRequest request
+    ){
+        String errorMessage = duplicateKeyException.initCause(duplicateKeyException).getMessage();
+        log.error("Failed to save entity with duplicate key: " + errorMessage, duplicateKeyException);
+        return buildErrorMessage(
+                duplicateKeyException,
+                errorMessage,
+                HttpStatus.CONFLICT,
                 request
         );
     }
@@ -143,7 +160,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
         log.error("Access Denied error ", accessDeniedException);
         return buildErrorResponse(
                 accessDeniedException,
-                HttpStatus.UNAUTHORIZED,
+                HttpStatus.FORBIDDEN,
                 request);
     }
 

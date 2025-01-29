@@ -1,10 +1,15 @@
 package me.learning.TodoSimple.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -24,10 +29,24 @@ public class Task {
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     private User user;
 
+    @Column(name = "title", length = 15, nullable = false)
+    @NotBlank
+    @Size(min = 1, max = 15)
+    private String title;
+
     @Column(name = "description", length = 255, nullable = false)
     @NotBlank
     @Size(min = 1, max = 255)
     private String description;
+
+    @Column(name = "created_at", nullable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @Column(name = "end_at", nullable = false)
+    @JsonFormat(pattern="yyyy-MM-dd")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDateTime endAt;
 
     @Override
     public boolean equals(Object o) {
@@ -47,7 +66,8 @@ public class Task {
 
         }
 
-        return Objects.equals(this.id, other.id) && Objects.equals(this.user, other.user) && Objects.equals(this.description, other.description);
+        return Objects.equals(this.id, other.id) && Objects.equals(this.user, other.user) && Objects.equals(this.description, other.description) &&
+                Objects.equals(this.title, other.title) && Objects.equals(this.createdAt, other.createdAt) && Objects.equals(this.endAt, other.endAt);
     }
 
     @Override

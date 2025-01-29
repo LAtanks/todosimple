@@ -32,14 +32,12 @@ public class AuthFilter extends OncePerRequestFilter {
 
         if(token != null){
             var login = jwtUtil.extractUserName(token);
-            System.out.println("Username: " + login + " token: " + token);
             UserDetails user = (this.userDetailsService.loadUserByUsername(login));
 
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             response.setHeader("Authorization", "Bearer " + token);
-            System.out.println(request.getHeader("Authorization"));
         }
 
         response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
