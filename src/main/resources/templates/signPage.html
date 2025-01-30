@@ -6,7 +6,79 @@
 
     <title>TodoSimple App</title>
     <link rel="stylesheet" href="css/sign.css">
-    <script src="js/sign.js" type="text/javascript"></script>
+    <style>.overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        /* Modal styles */
+        .modal {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            color: #dc3545;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-error {
+            padding: 10px 30px;
+            border: none;
+            border-radius: 4px;
+            background-color: #dc3545;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+
+        .btn-error:hover {
+            background-color: #c82333;
+        }
+
+        /* Test button styles */
+        .show-error-btn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .show-error-btn:hover {
+            background-color: #0056b3;
+        }</style>
 </head>
 <body>
 
@@ -53,5 +125,202 @@
             </form>
         </div>
     </div>
+    <script>
+        const BASE_URL = "http://localhost:8080";
+
+function showInfo(message) {
+    const overlay = document.getElementById('infoOverlay');
+    const infoMessage = document.getElementById('infoMessage');
+
+    // Set error message
+    infoMessage.textContent = message;
+
+    // Show overlay with fade effect
+    overlay.style.display = 'flex';
+    overlay.style.opacity = '0';
+    setTimeout(() => {
+        overlay.style.opacity = '1';
+    }, 10);
+}
+
+// Function to hide error
+function hideInfo() {
+    const overlay = document.getElementById('infoOverlay');
+    overlay.style.opacity = '0';
+    setTimeout(() => {
+        overlay.style.display = 'none';
+    }, 200);
+}
+
+// Close modal when clicking outside
+document.getElementById('infoOverlay').addEventListener('click', function(e) {
+    if (e.target === this) {
+        hideError();
+    }
+});
+
+// Prevent modal close when clicking inside the modal
+document.querySelector('.modal').addEventListener('click', function(e) {
+    e.stopPropagation();
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        hideError();
+    }
+});
+
+
+
+function showErrorMessage(){
+    const usernameInput = document.querySelector("#username");
+    const passwordInput = document.querySelector("#password");
+
+    const usernameError = document.querySelector("div#error-username");
+    const passwordError = document.querySelector("div#error-password");
+
+    usernameError.innerHTML = "";
+    passwordError.innerHTML = "";
+
+    if(usernameInput.value === '' || usernameInput == null ){
+        usernameError.style.display = "block";
+        usernameError.innerHTML = "Username não pode ser vazio";
+
+        return false;
+    }
+    else if(usernameInput.value.length < 2){
+        usernameError.style.display = "block";
+        usernameError.innerText = "Username precisar ser maior que 2 caracteres";
+
+        return false;
+    }
+    else if(usernameInput.value.length > 100){
+        usernameError.style.display = "block";
+        usernameError.innerText = "Username precisar ser menor que 100 caracteres";
+
+        return false;
+    }
+
+    var passwordvalue =  passwordInput.value;
+
+    if(passwordInput.value === "" || passwordInput == null){
+        passwordError.style.display = "block";
+        passwordError.innerHTML = "A senha não pode ser vazia";
+
+        return false;
+    }
+    else if(passwordvalue.length < 8){
+        passwordError.style.display = "block";
+        passwordError.innerHTML = "A senha tem que ser maior que 8 caratecteres";
+
+        return false;
+    }
+    else if(passwordvalue.length > 60){
+        passwordError.style.display = "block";
+        passwordError.innerHTML = "A senha tem que ser menor que 60 caratecteres";
+
+        return false;
+    }
+
+    return true;
+}
+document.getElementById('loginForm').addEventListener('submit', submit);
+
+async function submit(e) {
+   //if(!showErrorMessage()) return;
+
+    e.preventDefault();
+
+    const username = document.getElementById('username');
+    const password = document.getElementById('password');
+
+    // Simple validation
+    if(!showErrorMessage()) return;
+
+    const response = await loginUser(username.value, password.value);
+
+    if(response.ok){;
+
+        const {token} = await response.json();
+        window.localStorage.setItem("Authorization", token);
+
+        window.setTimeout(function () {
+           window.location = "/homePage";
+          }, 2000)
+    }else{
+        const data = await response.json();
+
+        showInfo("Error: " + data.message)
+        return;
+    }
+}
+
+document.querySelector(".btn-secondary").addEventListener('click', async function(e) {
+    if(!showErrorMessage()) return;
+
+    e.preventDefault();
+
+    const username = document.getElementById('username');
+    const password = document.getElementById('password');
+
+    // Simple validation
+    if(!showErrorMessage()) return;
+
+
+    const response = await registerUser(username.value, password.value);
+
+    if(response.ok){
+        showInfo("Usuário criado com sucesso. Agore Entre com ele")
+    }else{
+        const data = await response.json();
+
+        showInfo("Erro: " + data.message)
+        return;
+    }
+
+});
+
+async function registerUser(username, password){
+    let header = new Headers();
+    header.append("Content-Type", "application/json; charset=utf8");
+
+    try {
+        const response = await fetch(`${BASE_URL}/user`, {
+            method: "POST",
+            headers: header,
+            body: JSON.stringify({ username, password }),
+        });
+
+        return response;
+    } catch (error) {
+
+        showInfo("Erro de conexão: " + error.message )
+        throw error;
+    }
+}
+
+async function loginUser(username, password)
+{
+    let header = new Headers();
+    header.append("Content-Type", "application/json; charset=utf8");
+
+    try {
+        const response = await fetch(`${BASE_URL}/auth/login`, {
+            method: "POST",
+            headers: header,
+            body: JSON.stringify({ username, password }),
+        });
+
+        return response;
+    } catch (error) {
+
+        showInfo("Erro de conexão: " + error.message )
+        throw error;
+    }
+}
+
+
+    </script>
 </body>
 </html>

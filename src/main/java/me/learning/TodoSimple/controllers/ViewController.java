@@ -26,8 +26,13 @@ import java.nio.file.Files;
 public class ViewController {
 
     @RequestMapping(value = "css/sign.css", method = RequestMethod.GET)
-    public String SignCSS(Model model, HttpServletResponse response) {
+    public String signCSS(Model model, HttpServletResponse response) {
         return "css/sign.css";
+    }
+
+    @RequestMapping(value = "css/home.css", method = RequestMethod.GET)
+    public String homeCSS(Model model, HttpServletResponse response) {
+        return "css/home.css";
     }
 
     @RequestMapping(value = "signPage", method = RequestMethod.GET)
@@ -35,6 +40,13 @@ public class ViewController {
         ModelAndView mv = new ModelAndView("signPage");
         return mv;
     }
+
+    @RequestMapping(value = "homePage", method = RequestMethod.GET)
+    public ModelAndView homePage(ModelMap model) {
+        ModelAndView mv = new ModelAndView("homePage");
+        return mv;
+    }
+
     @RequestMapping(value = "js/sign.js", method = RequestMethod.GET)
     public String SingJS(Model model, HttpServletResponse response) {
         return "js/sign.js";
