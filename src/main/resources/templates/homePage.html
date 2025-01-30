@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html  xmlns:th="http://www.w3.org/1999/xhtml" lang="en">
+<html lang="-pt-br" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TodoSimple App</title>
-    <link rel="stylesheet" th:href="@{/css/sign.css}">
-    <style>
+    <title>TodoSimple • Home</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}"><style>
         .overlay {
             position: fixed;
             top: 0;
@@ -82,7 +81,6 @@
     </style>
 </head>
 <body>
-
     <!-- Overlay and Modal -->
     <div class="overlay" id="infoOverlay">
         <div class="modal">
@@ -98,35 +96,61 @@
         </div>
     </div>
 
-    <div class="container">
-        <div class="hero">
-            <div class="hero-content">
-                <h1>TodoSimple App</h1>
-            </div>
+    <nav class="navbar">
+        <a href="view/signPage.html" class="navbar-brand">TodoSimple</a>
+        <div class="navbar-nav">
+            <a href="#" id="user-name" class="nav-link">Nome:</a>
+            <a href="#" id="user-id" class="nav-link">Id:</a>
         </div>
-        <div class="form-container">
-            <div class="form-header">
-                <h2>Inscreva-se ou entre no TodoSimple</h2>
-            </div>
-            <form id="loginForm">
+    </nav>
+
+    <div class="container">
+        <div class="section">
+            <h2 class="section-title">Criar Tarefa</h2>
+            <form id="createTaskForm">
                 <div class="form-group">
-                    <label for="username">Nome de Usuário *</label>
-                    <input type="text" id="username" name="username" required>
-                    <div class="error" id="error-username"></div>
+                    <label for="name">Nome</label>
+                    <input type="text" id="name" name="name" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">Password *</label>
-                    <input type="password" id="password" name="password" required>
-                    <div class="error" id="error-password"></div>
+                    <label for="description">Descrição</label>
+                    <input type="text" id="description" name="description" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Entrar</button>
-                <button type="button" class="btn btn-secondary">Registrar</button>
-                <p class="terms">
-                    <a href="#">Termos de serviço</a>
-                </p>
+                <div class="form-group">
+                    <label for="end-at">Termina em</label>
+                    <input type="date" id="end-at" name="end-at" date required>
+                </div>
+                <button type="submit" class="btn">Criar</button>
+            </form>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Deletar tarefa</h2>
+            <form id="deleteTaskForm">
+                <div class="form-group">
+                    <label for="taskId">ID</label>
+                    <input type="text" id="taskId" name="taskId" required>
+                </div>
+                <button type="submit" class="btn">Deletar</button>
             </form>
         </div>
     </div>
 
+    <table class="task-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>NOME</th>
+                <th>DESCRIÇÃO</th>
+                <th>CRIADO EM</th>
+                <th>TERMINA EM</th>
+            </tr>
+        </thead>
+        <tbody id="taskTableBody">
+            <!-- Tasks will be inserted here by JavaScript -->
+        </tbody>
+    </table>
+    
+    <script src="view/js/main.js"></script>
 </body>
 </html>

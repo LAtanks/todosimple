@@ -43,6 +43,8 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
+
+
 function showErrorMessage(){
     const usernameInput = document.querySelector("#username");
     const passwordInput = document.querySelector("#password");
