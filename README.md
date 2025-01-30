@@ -1,8 +1,8 @@
-# TodoSimple App
+# ✔️TodoSimple App
 <h3>API RESTFul</h3>
 <h4>**Este Projeto é focado no back-end e não fron-end**</h4>
 
-<h2>🚀Tecnologias usadas:</h2>
+<h2>🛠Tecnologias usadas:</h2>
 <ul>
     <li>Frond-end</li>
     <ul>
@@ -16,6 +16,7 @@
         <li>Java 17 LTS</li>
         <li>Spring Boot</li>
         <li>Spring Security</li>
+         <li>MySql</li>
         <li>JWT</li>
         <li>Lombok</li>
         <li>oAuth2</li>
@@ -31,7 +32,7 @@
         </ul>
 </ul>
 
-## Instruções de uso
+## 🚀Instruções de uso
 
 Se você deseja testar a aplicação, siga as instruções abaixo:
 
@@ -45,4 +46,5 @@ Se você deseja testar a aplicação, siga as instruções abaixo:
 3. Execute o projeto
    - Abra o terminal na pasta do projeto e execute o comando: ```gradlew bootRun``` ou ```./gradlew bootRun``` (Windows && Linux)
 4. Acesse a aplicação
-   - Abra o navegador e acesse o endereço: ```http://localhost:8080```
+   - Abra o navegador e acesse o endereço: ```http://localhost:8080/signPage```
+   - Pronto! Agora você pode testar a aplicação
