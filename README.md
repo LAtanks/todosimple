@@ -43,8 +43,20 @@ Se você deseja testar a aplicação, siga as instruções abaixo:
  - Você pode baixar neste site: https://www.azul.com/downloads/?version=java-17-lts&package=jdk#zulu
  - Ative a opção "SET JAVA_HOME" no instalador
  - Verifique se o JDK foi instalado corretamente com o comando no terminal:```java -version```
-3. Execute o projeto
+3. Entre neste link e instale MySql server community https://dev.mysql.com/downloads/mysql/
+ - Selecionar a versão 8.0.41
+ - Selecione opção ```Server only``` e aperte next.
+ - quando chega em Authotication Method e coloque Use Legacy
+ - vai pedir uma senha e coloque uma fácil para o banco de dados
+   exemplo: 1234
+ - e pronto.
+4. Execute o projeto
    - Abra o terminal na pasta do projeto e execute o comando: ```gradlew bootRun``` ou ```./gradlew bootRun``` (Windows && Linux)
+<<<<<<< HEAD
 4. Acesse a aplicação
    - Abra o navegador e acesse o endereço: ```http://localhost:8080/signPage```
    - Pronto! Agora você pode testar a aplicação
+=======
+5. Acesse a aplicação
+   - Abra o navegador e acesse o endereço: ```http://localhost:8080```
+>>>>>>> 3b32c86e23ad9d874bd828479b8d600383540c0d
