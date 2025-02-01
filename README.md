@@ -1,6 +1,8 @@
 # ✔️TodoSimple App
 ### API RESTFul
 #### **Este Projeto é focado no back-end e não no front-end**
+#### Este projeto é uma aplicação web que permite o cadastro de usuários e tarefas. O usuário pode se cadastrar, logar, criar, editar, excluir e listar tarefas. A aplicação foi desenvolvida com Spring Boot, Spring Security, Spring Data JPA, MySQL, JWT, OAuth2 e Thymeleaf.
+
 
 ## 🛠Tecnologias usadas:
 - **Front-end:**
