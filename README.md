@@ -1,62 +1,46 @@
 # ✔️TodoSimple App
-<h3>API RESTFul</h3>
-<h4>**Este Projeto é focado no back-end e não fron-end**</h4>
+### API RESTFul
+#### **Este Projeto é focado no back-end e não no front-end**
 
-<h2>🛠Tecnologias usadas:</h2>
-<ul>
-    <li>Frond-end</li>
-    <ul>
-        <li>HTML5</li>
-        <li>CSS3</li>
-        <li>Javascript</li>
-    </ul>
-    <li>Back-end</li>
-    <ul>
-        <li>Gradle (Kotlin)</li>
-        <li>Java 17 LTS</li>
-        <li>Spring Boot</li>
-        <li>Spring Security</li>
-         <li>MySql</li>
-        <li>JWT</li>
-        <li>Lombok</li>
-        <li>oAuth2</li>
-        <li>Spring Data JPA</li>
-        <li>Thymeleaf</li>
-    </ul>
-    <li>Ferramentas</li>
-        <ul>
-            <li>ApiDog</li>
-            <li>Heigsql</li>
-            <li>Git</li>
-            <li>Intellij IDE</li>
-        </ul>
-</ul>
+## 🛠Tecnologias usadas:
+- **Front-end:**
+   - HTML5
+   - CSS3
+   - JavaScript
+- **Back-end:**
+   - Gradle (Kotlin)
+   - Java 17 LTS
+   - Spring Boot
+   - Spring Security
+   - MySQL
+   - JWT
+   - Lombok
+   - OAuth2
+   - Spring Data JPA
+   - Thymeleaf
+- **Ferramentas:**
+   - ApiDog
+   - HeidiSQL
+   - Git
+   - IntelliJ IDEA
 
-## 🚀Instruções de uso
+## 🚀Instruções de Uso
 
-Se você deseja testar a aplicação, siga as instruções abaixo:
+Para testar a aplicação, siga os passos abaixo:
 
-1. Clone o repositório
- - Instale o Git em sua máquina e execute o seguinte comando no terminal:
-```git clone "https://github.com/LAtanks/todosimple.git"```
-2. Instale O JDK 17
- - Você pode baixar neste site: https://www.azul.com/downloads/?version=java-17-lts&package=jdk#zulu
- - Ative a opção "SET JAVA_HOME" no instalador
- - Verifique se o JDK foi instalado corretamente com o comando no terminal:```java -version```
-3. Entre neste link e instale MySql server community https://dev.mysql.com/downloads/mysql/
- - Selecionar a versão 8.0.41
- - Selecione opção ```Server only``` e aperte next.
- - quando chega em Authotication Method e coloque Use Legacy
- - vai pedir uma senha e coloque uma fácil para o banco de dados
-   exemplo: 1234
- - e pronto.
-4. Execute o projeto
-   - Abra o terminal na pasta do projeto e execute o comando: ```gradlew bootRun``` ou ```./gradlew bootRun``` (Windows && Linux)
-<<<<<<< HEAD
-4. Acesse a aplicação
-   - Abra o navegador e acesse o endereço: ```http://localhost:8080/signPage```
-   - Pronto! Agora você pode testar a aplicação
-=======
-5. Acesse a aplicação
-   - Abra o navegador e acesse o endereço: ```http://localhost:8080```
->>>>>>> 3b32c86e23ad9d874bd828479b8d600383540c0d
+1. **Clone o repositório:**
+   - Instale o Git e execute: `git clone "https://github.com/LAtanks/todosimple.git"`
+2. **Instale o JDK 17:**
+   - Baixe em: [Azul](https://www.azul.com/downloads/?version=java-17-lts&package=jdk#zulu)
+   - Ative a opção "SET JAVA_HOME" durante a instalação
+   - Verifique a instalação com: `java -version`
+3. **Instale o MySQL server:**
+   - Baixe em: [MySQL](https://dev.mysql.com/downloads/mysql/)
+   - Selecione a versão 8.0.41
+   - Escolha "Server only" e clique em next
+   - Use o método de autenticação Legacy
+   - Defina uma senha fácil (ex.: 1234)
+4. **Execute o projeto:**
+   - Abra o terminal na pasta do projeto e execute: `gradlew bootRun` ou `./gradlew bootRun`
+5. **Acesse a aplicação:**
+   - Abra o navegador e vá para: `http://localhost:8080/signPage`
